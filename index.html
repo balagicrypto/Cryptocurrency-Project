@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M8 Token</title>
+    <link rel="stylesheet" href="styles.css">
+    <img src="m8logo.png" alt="m8 logo" class="m8logo">
+</head>
+<body>
+    
+    <h1>M8 Cryptocurrency DApp</h1>
+    <h2>Seamless Transactions, Limitless Possibilities: M8 Token, Where Finance Meets Innovation.</h2>
+    <div id="wallet-info">
+        <p><strong>Connected Wallet:</strong> <span id="connected-wallet"></span></p>
+        <p><strong>Available Balance:</strong> <span id="balance"></span> M8</p>
+        
+    <button id="connect-wallet" onclick="connectWallet()">Connect Wallet</button>
+    <form id="transfer-form" style="display:none;">
+        <label for="recipient"><strong>Recipient:</strong></label>
+        <input type="text" id="recipient" name="recipient" required>
+        <label for="amount"><strong>Amount:</strong></label>
+        <input type="number" id="amount" name="amount" min="0" step="1" required>
+        <button id="transfer" type="submit">Transfer</button>
+    </form>
+    <br>
+    <p>
+    <a  href="https://pancakeswap.finance/swap" target="_blank">
+    <button id ="Buy">Buy M8 Token !</button></a>
+    </p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.rawgit.com/ethereum/web3.js/1.0.0-beta.34/dist/web3.min.js"></script>
+    <script>
+        const web3 = new Web3(Web3.givenProvider);
+        let contractAddress = '0xCC825D61500f5475026B4283D5A85684079cC5c2';
+        let contractAbi = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"tokenOwner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokens","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokens","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"tokenOwner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"tokens","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenOwner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balances","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"founder","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokens","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokens","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"}];  // Insert the ABI of your deployed contract
+        let contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+        let connectedWallet = null;
+
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await web3.eth.getAccounts();
+                    connectedWallet = accounts[0];
+                    $('#connected-wallet').text(connectedWallet);
+                    $('#balance').text(await getBalance());
+                    $('#connect-wallet').hide();
+                    $('#transfer-form').show();
+                } catch (error) {
+                    console.error(error);
+                    alert('Error connecting to wallet. Please try again.');
+                }
+            } else {
+                alert('Please install MetaMask or another Ethereum wallet extension.');
+            }
+        }
+
+        async function getBalance() {
+            return await contractInstance.methods.balanceOf(connectedWallet).call();
+        }
+
+        async function transferTokens(event) {
+            event.preventDefault();
+            const recipient = $('#recipient').val();
+            const amount = $('#amount').val();
+
+            try {
+                await contractInstance.methods.transfer(recipient, amount).send({ from: connectedWallet });
+                $('#balance').text(await getBalance());
+                alert('Tokens transferred successfully!');
+            } catch (error) {
+                console.error(error);
+                alert('Error transferring tokens. Please check your inputs and try again.');
+            }
+        }
+
+        $(document).ready(function() {
+            $('#transfer-form').submit(transferTokens);
+        });
+    </script>
+</body>
+</html>

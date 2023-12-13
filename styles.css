@@ -1,0 +1,64 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 40px;
+    background-image: url('image.jpg')
+}
+
+h1 {
+    text-align: center;
+    background-color: #8f0388;
+    color: white;
+}
+h2{
+    text-align: center;
+    color:#8f0388;
+}
+
+#wallet-info {
+    margin-top: 40px;
+}
+
+form {
+    margin-top: 40px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+#connect-wallet{
+    background-color: #8f0388;
+    font-size: 18px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    color: white;
+}
+
+#transfer{
+    background-color: #8f0388;
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: white;
+}
+.m8logo {
+    display: block;
+    margin-left: 45%;
+    margin-right: 50%;
+    width: 8%;
+  }
+
+  #Buy{
+    background-color: #8f0388;
+    font-size: 18px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    color: white;
+    text-align: right;
+  }
+
+
+
+
+
+
